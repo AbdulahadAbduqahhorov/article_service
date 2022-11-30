@@ -1,0 +1,48 @@
+syntax="proto3";
+
+package genproto;
+option go_package="./author_service";
+
+message Author {
+   
+        string id=1;             
+        string full_name=2;  
+        string created_at=3; 
+        string updated_at=4; 
+        string deleted_at=5; 
+    
+    
+}
+
+message CreateAuthorRequest {
+    string full_name = 1;
+}
+
+message CreateAuthorResponse {
+    string id = 1;
+}
+
+message GetAuthorResponse{
+    repeated Author authors=1;
+}
+
+message GetAuthorRequest{
+    int64 limit=1;
+    int64 offset=2;
+    string search=3;
+
+}
+
+message GetAuthorByIdResponse{
+    string id=1;
+}
+
+
+service AuthorService {
+    rpc Create(CreateAuthorRequest) returns (CreateAuthorResponse) {}
+    rpc GetAuthor (GetAuthorRequest) returns (GetAuthorResponse){}
+    rpc GetByIdAuthor (GetAuthorByIdResponse) returns (Author){}
+
+}
+
+

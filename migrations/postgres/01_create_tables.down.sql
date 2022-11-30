@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS article;
+DROP TABLE IF EXISTS author;
+

@@ -1,0 +1,1 @@
+ALTER TABLE author ADD COLUMN middlename varchar(100);

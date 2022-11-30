@@ -1,0 +1,427 @@
+definitions:
+  models.Article:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Author:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.CreateArticleModel:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      title:
+        type: string
+    type: object
+  models.CreateAuthorModel:
+    properties:
+      fullname:
+        type: string
+    required:
+    - fullname
+    type: object
+  models.GetArticleByIdModel:
+    properties:
+      author:
+        $ref: '#/definitions/models.Author'
+      body:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.JSONErrorResult:
+    properties:
+      error:
+        type: string
+    type: object
+  models.JSONResult:
+    properties:
+      data: {}
+      message:
+        type: string
+    type: object
+  models.UpdateArticleModel:
+    properties:
+      body:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  models.UpdateAuthorModel:
+    properties:
+      fullname:
+        type: string
+      id:
+        type: string
+    required:
+    - fullname
+    type: object
+info:
+  contact:
+    email: example@swagger.io
+    url: http://example.com
+  license:
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /v1/article:
+    get:
+      consumes:
+      - application/json
+      description: get article
+      parameters:
+      - description: "10"
+        in: query
+        name: limit
+        type: integer
+      - description: "0"
+        in: query
+        name: offset
+        type: integer
+      - description: string default
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Article'
+                  type: array
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: List Article
+      tags:
+      - articles
+    post:
+      consumes:
+      - application/json
+      description: create article
+      parameters:
+      - description: article body
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateArticleModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Create article
+      tags:
+      - articles
+    put:
+      consumes:
+      - application/json
+      description: update article
+      parameters:
+      - description: article body
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateArticleModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                message:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Update article
+      tags:
+      - articles
+  /v1/article/{id}:
+    delete:
+      description: delete an article
+      parameters:
+      - description: article id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                message:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Delete article
+      tags:
+      - articles
+    get:
+      consumes:
+      - application/json
+      description: get an article by id
+      parameters:
+      - description: article id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.GetArticleByIdModel'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Get article by id
+      tags:
+      - articles
+  /v1/author:
+    get:
+      consumes:
+      - application/json
+      description: get author
+      parameters:
+      - description: "10"
+        in: query
+        name: limit
+        type: integer
+      - description: "0"
+        in: query
+        name: offset
+        type: integer
+      - description: string default
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Author'
+                  type: array
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: List Author
+      tags:
+      - authors
+    post:
+      consumes:
+      - application/json
+      description: create author
+      parameters:
+      - description: author body
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateAuthorModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+        "422":
+          description: Validation Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONErrorResult'
+            - properties:
+                error:
+                  type: string
+              type: object
+        "500":
+          description: Server error
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Create author
+      tags:
+      - authors
+    put:
+      consumes:
+      - application/json
+      description: update author
+      parameters:
+      - description: author body
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateAuthorModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Update author
+      tags:
+      - authors
+  /v1/author/{id}:
+    delete:
+      description: delete an author
+      parameters:
+      - description: author id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/models.JSONResult'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Delete author
+      tags:
+      - authors
+    get:
+      consumes:
+      - application/json
+      description: get an author by id
+      parameters:
+      - description: author id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+        "404":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Get author by id
+      tags:
+      - authors
+swagger: "2.0"
