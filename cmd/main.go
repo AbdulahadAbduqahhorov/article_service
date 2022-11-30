@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/AbdulahadAbduqahhorov/gin/Article/config"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/genproto/author_service"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/service"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage/postgres"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/config"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/author_service"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/service"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage/postgres"
 	"github.com/labstack/gommon/log"
 	"google.golang.org/grpc"
 )
@@ -36,7 +36,7 @@ func main() {
 	}
 
 	service := grpc.NewServer()
-	author_service.RegisterAuthorServiceServer(service,s)
+	author_service.RegisterAuthorServiceServer(service, s)
 	if err := service.Serve(lis); err != nil {
 		log.Error("error while listening: %v", err)
 	}

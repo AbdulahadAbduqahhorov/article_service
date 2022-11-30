@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/AbdulahadAbduqahhorov/gin/Article/genproto/author_service"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/author_service"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
 )
 
 type AuthorService struct {

@@ -3,8 +3,8 @@ package handlers
 import (
 	"strconv"
 
-	"github.com/AbdulahadAbduqahhorov/gin/Article/config"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/config"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
 	"github.com/gin-gonic/gin"
 )
 

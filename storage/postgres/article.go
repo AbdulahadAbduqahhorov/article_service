@@ -3,16 +3,14 @@ package postgres
 import (
 	"errors"
 
-	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/models"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
 	"github.com/jmoiron/sqlx"
 )
 
 type articleRepo struct {
 	db *sqlx.DB
 }
-
-
 
 func NewArticleRepo(db *sqlx.DB) storage.ArticleRepoI {
 	return articleRepo{
@@ -22,7 +20,6 @@ func NewArticleRepo(db *sqlx.DB) storage.ArticleRepoI {
 
 func (stg articleRepo) CreateArticle(id string, article models.CreateArticleModel) error {
 
-	
 	_, err := stg.db.Exec(`INSERT INTO article 
 	(
 		id,

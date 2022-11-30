@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"github.com/AbdulahadAbduqahhorov/gin/Article/genproto/author_service"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/author_service"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/models"
 )
 
 type StorageI interface {
@@ -19,7 +19,7 @@ type ArticleRepoI interface {
 }
 
 type AuthorRepoI interface {
-	CreateAuthor(author_service.CreateAuthorRequest) (author_service.CreateAuthorResponse,error)
+	CreateAuthor(author_service.CreateAuthorRequest) (author_service.CreateAuthorResponse, error)
 	GetAuthor(author_service.GetAuthorRequest) (author_service.GetAuthorResponse, error)
 	GetAuthorById(author_service.GetAuthorByIdResponse) (author_service.Author, error)
 	UpdateAuthor(author models.UpdateAuthorModel) error

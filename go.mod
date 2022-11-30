@@ -1,4 +1,4 @@
-module github.com/AbdulahadAbduqahhorov/gin/Article
+module github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service
 
 go 1.19
 

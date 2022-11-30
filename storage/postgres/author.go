@@ -3,11 +3,10 @@ package postgres
 import (
 	"database/sql"
 	"errors"
-	"time"
 
-	"github.com/AbdulahadAbduqahhorov/gin/Article/genproto/author_service"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/author_service"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/models"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -21,8 +20,8 @@ func NewAuthorRepo(db *sqlx.DB) storage.AuthorRepoI {
 		db: db,
 	}
 }
-func (stg authorRepo) CreateAuthor(req author_service.CreateAuthorRequest) (author_service.CreateAuthorResponse,error) {
-	id:=uuid.New().String()
+func (stg authorRepo) CreateAuthor(req author_service.CreateAuthorRequest) (author_service.CreateAuthorResponse, error) {
+	id := uuid.New().String()
 	_, err := stg.db.Exec(`INSERT INTO 
 		author (
 			id,
@@ -36,10 +35,10 @@ func (stg authorRepo) CreateAuthor(req author_service.CreateAuthorRequest) (auth
 		req.FullName,
 	)
 	if err != nil {
-		return author_service.CreateAuthorResponse{},err
+		return author_service.CreateAuthorResponse{}, err
 	}
-	return author_service.CreateAuthorResponse{Id:id},nil
-	
+	return author_service.CreateAuthorResponse{Id: id}, nil
+
 }
 
 func (stg authorRepo) GetAuthor(req author_service.GetAuthorRequest) (author_service.GetAuthorResponse, error) {
@@ -89,9 +88,8 @@ func (stg authorRepo) GetAuthor(req author_service.GetAuthorRequest) (author_ser
 }
 
 func (stg authorRepo) GetAuthorById(req author_service.GetAuthorByIdResponse) (author_service.Author, error) {
-	var res  author_service.Author
+	var res author_service.Author
 	var tempFullname *string
-	var tempUpdatedAt *time.Time
 
 	var a sql.NullString
 	err := stg.db.QueryRow(`
@@ -109,14 +107,11 @@ func (stg authorRepo) GetAuthorById(req author_service.GetAuthorByIdResponse) (a
 		&a,
 		&res.DeletedAt,
 	)
-	if a.Valid{
-		res.UpdatedAt=a.String
+	if a.Valid {
+		res.UpdatedAt = a.String
 	}
 	if err != nil {
 		return res, err
-	}
-	if tempUpdatedAt!=nil{
-		res.UpdatedAt=
 	}
 	if tempFullname != nil {
 		res.FullName = *tempFullname

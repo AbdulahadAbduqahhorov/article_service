@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -33,4 +33,3 @@ func (p *Postgres) Author() storage.AuthorRepoI {
 	}
 	return p.author
 }
-

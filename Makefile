@@ -11,10 +11,10 @@ install:
 	go run cmd/main.go
 
 migrateup:
-	migrate -path ./migrations/postgres -database 'postgres://abdulahad:passwd123@localhost:5432/uacademy?sslmode=disable' up
+	migrate -path ./migrations/postgres -database 'postgres://abdulahad:passwd123@localhost:5432/article_service_db?sslmode=disable' up
 
 migratedown:
-	migrate -path ./migrations/postgres -database 'postgres://abdulahad:passwd123@localhost:5432/uacademy?sslmode=disable' down
+	migrate -path ./migrations/postgres -database 'postgres://abdulahad:passwd123@localhost:5432/article_service_db?sslmode=disable' down
 
 proto:
 	protoc --go_out=./genproto --go-grpc_out=./genproto protos/author_service/*.proto

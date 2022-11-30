@@ -5,9 +5,9 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	docs "github.com/AbdulahadAbduqahhorov/gin/Article/api/docs"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/api/handlers"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/config"
+	docs "github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/api/docs"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/api/handlers"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/config"
 )
 
 // @contact.url   http://example.com

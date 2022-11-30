@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/models"
 	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
