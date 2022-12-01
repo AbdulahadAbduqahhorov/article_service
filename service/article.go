@@ -49,7 +49,7 @@ func (s *ArticleService) GetArticleList(ctx context.Context,req *article_service
 
 	res, err := s.Stg.Article().GetArticleList(req)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "method GetArticleList: %v")
+		return nil, status.Errorf(codes.Internal, "method GetArticleList: %v",err)
 
 	}
 	return res,nil
@@ -58,7 +58,7 @@ func (s *ArticleService) GetArticleById(ctx context.Context,req *article_service
 
 	res, err := s.Stg.Article().GetArticleById(req.Id)
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "method GetArticleById not implemented")
+		return nil, status.Errorf(codes.Internal, "method GetArticleById: %v",err)
 
 	}
 	return res,nil

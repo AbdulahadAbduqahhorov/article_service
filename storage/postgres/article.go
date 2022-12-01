@@ -47,12 +47,12 @@ func (stg articleRepo) CreateArticle(id string, req *article_service.CreateArtic
 
 func (stg articleRepo) GetArticleList(req *article_service.GetArticleListRequest) (*article_service.GetArticleListResponse, error) {
 	var (
-		res       []*article_service.Article
 		u         sql.NullString
 		d         sql.NullString
 		tempTitle string
 		tempBody  string
 	)
+	res := make([]*article_service.Article, 0)
 	rows, err := stg.db.Queryx(`SELECT 
 		id,
 		title,
@@ -89,7 +89,7 @@ func (stg articleRepo) GetArticleList(req *article_service.GetArticleListRequest
 			return nil, err
 		}
 		if u.Valid {
-			article.CreatedAt = u.String
+			article.UpdatedAt = u.String
 		}
 		if d.Valid {
 			article.DeletedAt = d.String
@@ -107,16 +107,19 @@ func (stg articleRepo) GetArticleList(req *article_service.GetArticleListRequest
 
 func (stg articleRepo) GetArticleById(id string) (*article_service.GetArticleByIdResponse, error) {
 	var (
-		article       article_service.GetArticleByIdResponse
-		tempFullname  *string
-		tempTitle     string
-		tempBody      string
-		tempId        string
-		tempCreatedAt string
-		u             sql.NullString
-		d             sql.NullString
-		au            sql.NullString
-		ad            sql.NullString
+		res article_service.GetArticleByIdResponse
+
+		articleUpdated_at    sql.NullString
+		articleDeleted_at    sql.NullString
+
+		tempContentTitle     string
+		tempContentBody      string
+
+		tempAuthorId         string
+		tempAuthorCreatedAt  string
+		tempAuthorFullname   *string
+		tempAuthorUpdatedAt  sql.NullString
+		tempAuthorDeleteddAt sql.NullString
 	)
 	err := stg.db.QueryRow(`
 	SELECT 
@@ -132,41 +135,60 @@ func (stg articleRepo) GetArticleById(id string) (*article_service.GetArticleByI
 		au.updated_at,
 		au.deleted_at
 	FROM article ar JOIN author au ON ar.author_id=au.id WHERE ar.id=$1 `, id).Scan(
-		&article.Id,
-		&tempTitle,
-		&tempBody,
-		&article.CreatedAt,
-		&au,
-		&ad,
-		&tempId,
-		&tempFullname,
-		&tempCreatedAt,
-		&u,
-		&d,
+		&res.Id,
+		&tempContentTitle,
+		&tempContentBody,
+		&res.CreatedAt,
+		&articleUpdated_at,
+		&articleDeleted_at,
+		&tempAuthorId,
+		&tempAuthorFullname,
+		&tempAuthorCreatedAt,
+		&tempAuthorUpdatedAt,
+		&tempAuthorDeleteddAt,
 	)
 	if err != nil {
 		return nil, err
 	}
-	if au.Valid {
-		article.UpdatedAt = au.String
+	if articleUpdated_at.Valid {
+		res.UpdatedAt = articleDeleted_at.String
 	}
-	if ad.Valid {
-		article.DeletedAt = ad.String
+	if articleDeleted_at.Valid {
+		res.DeletedAt = articleDeleted_at.String
 	}
-	if tempFullname != nil {
-		article.Author = &article_service.GetArticleByIdResponse_Author{
-			Id:       tempId,
-			FullName: *tempFullname,
-			CreatedAt: tempCreatedAt,
-			UpdatedAt: u.String,
-			DeletedAt: u.String,
-		}
+	var (
+		fname string
+		u string
+		d string
+	) 
+	if tempAuthorFullname != nil {
+		fname=*tempAuthorFullname
 	}
-	article.Content = &article_service.Content{Title: tempTitle, Body: tempBody}
-	
-	return &article, nil
-}
+	if tempAuthorUpdatedAt.Valid{
+		u=tempAuthorUpdatedAt.String
+	}
 
+	if tempAuthorDeleteddAt.Valid{
+		d=tempAuthorDeleteddAt.String
+	}
+
+	res.Content= &article_service.Content{
+		Title: tempContentTitle,
+		Body: tempContentBody,
+	}
+
+	res.Author= &article_service.GetArticleByIdResponse_Author{
+		Id: tempAuthorId,
+		FullName: fname,
+		CreatedAt: tempAuthorCreatedAt,
+		UpdatedAt: u,
+		DeletedAt: d,
+	}
+
+
+	return &res, nil
+}
+	
 func (stg articleRepo) UpdateArticle(req *article_service.UpdateArticleRequest) error {
 
 	res, err := stg.db.NamedExec(`
