@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/author_service"
-	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/models"
 	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -20,7 +19,7 @@ func NewAuthorRepo(db *sqlx.DB) storage.AuthorRepoI {
 		db: db,
 	}
 }
-func (stg authorRepo) CreateAuthor(req author_service.CreateAuthorRequest) (author_service.CreateAuthorResponse, error) {
+func (stg authorRepo) CreateAuthor(req *author_service.CreateAuthorRequest) (string, error) {
 	id := uuid.New().String()
 	_, err := stg.db.Exec(`INSERT INTO 
 		author (
@@ -35,16 +34,19 @@ func (stg authorRepo) CreateAuthor(req author_service.CreateAuthorRequest) (auth
 		req.FullName,
 	)
 	if err != nil {
-		return author_service.CreateAuthorResponse{}, err
+		return "", err
 	}
-	return author_service.CreateAuthorResponse{Id: id}, nil
+	return id, nil
 
 }
 
-func (stg authorRepo) GetAuthor(req author_service.GetAuthorRequest) (author_service.GetAuthorResponse, error) {
-	var res author_service.GetAuthorResponse
-	var tempFullname *string
-
+func (stg authorRepo) GetAuthor(req *author_service.GetAuthorRequest) (*author_service.GetAuthorResponse, error) {
+	var (
+		authors      []*author_service.Author
+		tempFullname *string
+		u            sql.NullString
+		d            sql.NullString
+	)
 	rows, err := stg.db.Queryx(`SELECT 
 		id,
 		fullname,
@@ -56,12 +58,12 @@ func (stg authorRepo) GetAuthor(req author_service.GetAuthorRequest) (author_ser
 		LIMIT $2
 		OFFSET $3
 	`,
-		req.Limit,
 		req.Search,
-		req.Offset,
+		int(req.Limit),
+		int(req.Offset),
 	)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	for rows.Next() {
@@ -70,28 +72,37 @@ func (stg authorRepo) GetAuthor(req author_service.GetAuthorRequest) (author_ser
 			&author.Id,
 			&tempFullname,
 			&author.CreatedAt,
-			&author.UpdatedAt,
-			&author.DeletedAt,
+			&u,
+			&d,
 		)
 		if err != nil {
-			return res, err
+			return nil, err
 		}
 		if tempFullname != nil {
 			author.FullName = *tempFullname
 		}
-		res.Authors = append(res.Authors, &author)
+		if u.Valid {
+			author.UpdatedAt = u.String
+		}
+		if d.Valid {
+			author.DeletedAt = d.String
+		}
+		authors = append(authors, &author)
 
 	}
 
-	return res, err
+	return &author_service.GetAuthorResponse{Authors: authors}, err
 
 }
 
-func (stg authorRepo) GetAuthorById(req author_service.GetAuthorByIdResponse) (author_service.Author, error) {
-	var res author_service.Author
-	var tempFullname *string
+func (stg authorRepo) GetAuthorById(id string) (*author_service.Author, error) {
+	var (
+		res          author_service.Author
+		tempFullname *string
 
-	var a sql.NullString
+		u sql.NullString
+		d sql.NullString
+	)
 	err := stg.db.QueryRow(`
 	SELECT 
 		id,
@@ -100,33 +111,36 @@ func (stg authorRepo) GetAuthorById(req author_service.GetAuthorByIdResponse) (a
 		updated_at,
 		deleted_at
 	FROM author  
-	WHERE id=$1 AND deleted_at is NULL`, req.Id).Scan(
+	WHERE id=$1 AND deleted_at is NULL`, id).Scan(
 		&res.Id,
 		&tempFullname,
 		&res.CreatedAt,
-		&a,
-		&res.DeletedAt,
+		&u,
+		&d,
 	)
-	if a.Valid {
-		res.UpdatedAt = a.String
+	if u.Valid {
+		res.UpdatedAt = u.String
+	}
+	if d.Valid {
+		res.DeletedAt = d.String
 	}
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	if tempFullname != nil {
 		res.FullName = *tempFullname
 	}
-	return res, nil
+	return &res, nil
 }
 
-func (stg authorRepo) UpdateAuthor(author models.UpdateAuthorModel) error {
+func (stg authorRepo) UpdateAuthor(req *author_service.UpdateAuthorRequest) error {
 	res, err := stg.db.NamedExec(`
 	UPDATE  author SET 
 		fullname=:f, 
 		updated_at=now() 
 		WHERE id=:i AND deleted_at IS NULL `, map[string]interface{}{
-		"f": author.FullName,
-		"i": author.Id,
+		"f": req.FullName,
+		"i": req.Id,
 	})
 	if err != nil {
 		return err

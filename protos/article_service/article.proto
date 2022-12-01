@@ -1,0 +1,89 @@
+syntax="proto3";
+
+option go_package="./article_service";
+package genproto;
+
+service ArticleService {
+    rpc CreateArticle(CreateArticleRequest) returns (CreateArticleResponse) {}
+    rpc GetArticleList (GetArticleListRequest) returns (GetArticleListResponse){}
+    rpc GetArticleById (GetArticleByIdRequest) returns (GetArticleByIdResponse){}
+    rpc UpdateArticle (UpdateArticleRequest) returns (UpdateArticleResponse){}
+    rpc DeleteArticle (DeleteArticleRequest) returns (DeleteArticleResponse){}
+}
+
+message Content{
+    string title=1;
+    string body=2;
+}
+message Article {
+    string id=1;  
+    Content content=2;           
+    string author_id=3;  
+    string created_at=4; 
+    string updated_at=5; 
+    string deleted_at=6;
+}
+
+message CreateArticleRequest {
+    Content content = 1;
+    string author_id=3;
+
+}
+
+message CreateArticleResponse {
+    string id = 1;
+}
+
+message GetArticleListRequest{
+    int32 limit=1;
+    int32 offset=2;
+    string search=3;
+
+}
+
+message GetArticleListResponse{
+    repeated Article articles=1;
+}
+
+
+
+message GetArticleByIdRequest{
+    string id=1;
+}
+message GetArticleByIdResponse{
+    message Author {
+        string id=1;             
+        string full_name=2;  
+        string created_at=3; 
+        string updated_at=4; 
+        string deleted_at=5; 
+    }
+    string id=1;  
+    Content content=2;           
+    Author author=3;  
+    string created_at=4; 
+    string updated_at=5; 
+    string deleted_at=6;
+}
+
+message UpdateArticleRequest{
+    string id=1;
+    Content content=2;
+}
+
+message UpdateArticleResponse{
+    string status=1;
+}
+
+message DeleteArticleRequest{
+    string id=1;
+}
+
+message DeleteArticleResponse{
+    string status=1;
+}
+
+
+
+
+

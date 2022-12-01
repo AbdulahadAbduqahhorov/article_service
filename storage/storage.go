@@ -1,8 +1,8 @@
 package storage
 
 import (
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/article_service"
 	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/author_service"
-	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/models"
 )
 
 type StorageI interface {
@@ -11,17 +11,20 @@ type StorageI interface {
 }
 
 type ArticleRepoI interface {
-	CreateArticle(id string, article models.CreateArticleModel) error
-	GetArticle(limit, offset int, search string) ([]models.Article, error)
-	GetArticleById(id string) (models.GetArticleByIdModel, error)
-	UpdateArticle(article models.UpdateArticleModel) error
+	CreateArticle(id string, req *article_service.CreateArticleRequest) error
+	GetArticleList(req *article_service.GetArticleListRequest) (*article_service.GetArticleListResponse, error)
+	GetArticleById(id string) (*article_service.GetArticleByIdResponse, error)
+	UpdateArticle(req *article_service.UpdateArticleRequest) error
 	DeleteArticle(id string) error
 }
 
 type AuthorRepoI interface {
-	CreateAuthor(author_service.CreateAuthorRequest) (author_service.CreateAuthorResponse, error)
-	GetAuthor(author_service.GetAuthorRequest) (author_service.GetAuthorResponse, error)
-	GetAuthorById(author_service.GetAuthorByIdResponse) (author_service.Author, error)
-	UpdateAuthor(author models.UpdateAuthorModel) error
+	CreateAuthor(req *author_service.CreateAuthorRequest) (string, error)
+	GetAuthor(req *author_service.GetAuthorRequest) (*author_service.GetAuthorResponse, error)
+	GetAuthorById(id string) (*author_service.Author, error)
+	UpdateAuthor(req *author_service.UpdateAuthorRequest)error
 	DeleteAuthor(id string) error
 }
+
+
+

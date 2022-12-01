@@ -16,5 +16,11 @@ migrateup:
 migratedown:
 	migrate -path ./migrations/postgres -database 'postgres://abdulahad:passwd123@localhost:5432/article_service_db?sslmode=disable' down
 
-proto:
+proto-author:
 	protoc --go_out=./genproto --go-grpc_out=./genproto protos/author_service/*.proto
+proto-article:
+	protoc --go_out=./genproto --go-grpc_out=./genproto protos/article_service/*.proto
+
+
+
+

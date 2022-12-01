@@ -4,14 +4,11 @@ package genproto;
 option go_package="./author_service";
 
 message Author {
-   
-        string id=1;             
-        string full_name=2;  
-        string created_at=3; 
-        string updated_at=4; 
-        string deleted_at=5; 
-    
-    
+    string id=1;             
+    string full_name=2;  
+    string created_at=3; 
+    string updated_at=4; 
+    string deleted_at=5; 
 }
 
 message CreateAuthorRequest {
@@ -22,27 +19,47 @@ message CreateAuthorResponse {
     string id = 1;
 }
 
-message GetAuthorResponse{
-    repeated Author authors=1;
-}
-
 message GetAuthorRequest{
-    int64 limit=1;
-    int64 offset=2;
+    int32 limit=1;
+    int32 offset=2;
     string search=3;
 
 }
 
-message GetAuthorByIdResponse{
+message GetAuthorResponse{
+    repeated Author authors=1;
+}
+
+
+
+message GetAuthorByIdRequest{
     string id=1;
+}
+
+message UpdateAuthorRequest{
+    string id=1;
+    string full_name=2;
+}
+
+message UpdateAuthorResponse{
+    string status=1;
+}
+
+message DeleteAuthorRequest{
+    string id=1;
+}
+
+message DeleteAuthorResponse{
+    string status=1;
 }
 
 
 service AuthorService {
-    rpc Create(CreateAuthorRequest) returns (CreateAuthorResponse) {}
+    rpc CreateAuthor(CreateAuthorRequest) returns (CreateAuthorResponse) {}
     rpc GetAuthor (GetAuthorRequest) returns (GetAuthorResponse){}
-    rpc GetByIdAuthor (GetAuthorByIdResponse) returns (Author){}
-
+    rpc GetAuthorById (GetAuthorByIdRequest) returns (Author){}
+    rpc UpdateAuthor (UpdateAuthorRequest) returns (UpdateAuthorResponse){}
+    rpc DeleteAuthor (DeleteAuthorRequest) returns (DeleteAuthorResponse){}
 }
 
 

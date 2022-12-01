@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/config"
+	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/article_service"
 	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/genproto/author_service"
 	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/service"
 	"github.com/AbdulahadAbduqahhorov/gRPC/blogpost/article_service/storage"
@@ -27,7 +28,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	s := service.NewAuthorService(stg)
+	authorSrv := service.NewAuthorService(stg)
+	articleSrv:=service.NewArticleService(stg)
 
 	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
@@ -36,7 +38,8 @@ func main() {
 	}
 
 	service := grpc.NewServer()
-	author_service.RegisterAuthorServiceServer(service, s)
+	author_service.RegisterAuthorServiceServer(service, authorSrv)
+	article_service.RegisterArticleServiceServer(service,articleSrv)
 	if err := service.Serve(lis); err != nil {
 		log.Error("error while listening: %v", err)
 	}

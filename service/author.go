@@ -18,26 +18,41 @@ func NewAuthorService(stg storage.StorageI) *AuthorService {
 	}
 }
 
-func (s *AuthorService) Create(ctx context.Context, req *author_service.CreateAuthorRequest) (*author_service.CreateAuthorResponse, error) {
-	res, err := s.Stg.Author().CreateAuthor(*req)
+func (s *AuthorService) CreateAuthor(ctx context.Context, req *author_service.CreateAuthorRequest) (*author_service.CreateAuthorResponse, error) {
+	id, err := s.Stg.Author().CreateAuthor(req)
 	if err != nil {
-		return &author_service.CreateAuthorResponse{}, err
+		return nil, err
 	}
-	return &res, nil
+	return &author_service.CreateAuthorResponse{Id: id}, nil
 }
 
 func (s *AuthorService) GetAuthor(ctx context.Context, req *author_service.GetAuthorRequest) (*author_service.GetAuthorResponse, error) {
-	res, err := s.Stg.Author().GetAuthor(*req)
+	res, err := s.Stg.Author().GetAuthor(req)
 	if err != nil {
-		return &author_service.GetAuthorResponse{}, err
+		return nil, err
 	}
-	return &res, nil
+	return res, nil
 }
 
-func (s *AuthorService) GetByIdAuthor(ctx context.Context, req *author_service.GetAuthorByIdResponse) (*author_service.Author, error) {
-	res, err := s.Stg.Author().GetAuthorById(*req)
+func (s *AuthorService) GetAuthorById(ctx context.Context, req *author_service.GetAuthorByIdRequest) (*author_service.Author, error) {
+	res, err := s.Stg.Author().GetAuthorById(req.Id)
 	if err != nil {
-		return &author_service.Author{}, err
+		return nil, err
 	}
-	return &res, nil
+	return res, nil
+}
+
+func (s *AuthorService)	UpdateAuthor(ctx context.Context, req *author_service.UpdateAuthorRequest) (*author_service.UpdateAuthorResponse, error){
+	err:=s.Stg.Author().UpdateAuthor(req)
+	if err!=nil {
+		return nil, err
+	}
+	return &author_service.UpdateAuthorResponse{Status: "Updated"},nil
+}
+func (s *AuthorService)	DeleteAuthor(ctx context.Context, req *author_service.DeleteAuthorRequest) (*author_service.DeleteAuthorResponse, error){
+	err:=s.Stg.Author().DeleteAuthor(req.Id)
+	if err!=nil {
+		return nil, err
+	}
+	return &author_service.DeleteAuthorResponse{Status: "Deleted"},nil
 }
