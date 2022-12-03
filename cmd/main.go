@@ -29,17 +29,17 @@ func main() {
 		panic(err)
 	}
 	authorSrv := service.NewAuthorService(stg)
-	articleSrv:=service.NewArticleService(stg)
+	articleSrv := service.NewArticleService(stg)
 
-	lis, err := net.Listen("tcp", ":9000")
+	lis, err := net.Listen("tcp", cfg.GrpcPort)
 	if err != nil {
 		log.Error("error while listening: %v", err)
 		return
 	}
-
+	fmt.Println("server is running")
 	service := grpc.NewServer()
 	author_service.RegisterAuthorServiceServer(service, authorSrv)
-	article_service.RegisterArticleServiceServer(service,articleSrv)
+	article_service.RegisterArticleServiceServer(service, articleSrv)
 	if err := service.Serve(lis); err != nil {
 		log.Error("error while listening: %v", err)
 	}

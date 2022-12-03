@@ -19,9 +19,9 @@ func NewAuthorRepo(db *sqlx.DB) storage.AuthorRepoI {
 		db: db,
 	}
 }
-func (stg authorRepo) CreateAuthor(req *author_service.CreateAuthorRequest) (string, error) {
+func (u authorRepo) CreateAuthor(req *author_service.CreateAuthorRequest) (string, error) {
 	id := uuid.New().String()
-	_, err := stg.db.Exec(`INSERT INTO 
+	_, err := u.db.Exec(`INSERT INTO 
 		author (
 			id,
 			fullname
@@ -40,14 +40,15 @@ func (stg authorRepo) CreateAuthor(req *author_service.CreateAuthorRequest) (str
 
 }
 
-func (stg authorRepo) GetAuthor(req *author_service.GetAuthorRequest) (*author_service.GetAuthorResponse, error) {
+func (u authorRepo) GetAuthor(req *author_service.GetAuthorRequest) (*author_service.GetAuthorResponse, error) {
+	res := &author_service.GetAuthorResponse{
+		Authors: make([]*author_service.Author, 0),
+	}
 	var (
-		authors      []*author_service.Author
-		tempFullname *string
-		u            sql.NullString
-		d            sql.NullString
+		updatedAt sql.NullString
+		deletedAt sql.NullString
 	)
-	rows, err := stg.db.Queryx(`SELECT 
+	rows, err := u.db.Queryx(`SELECT 
 		id,
 		fullname,
 		created_at,
@@ -70,40 +71,35 @@ func (stg authorRepo) GetAuthor(req *author_service.GetAuthorRequest) (*author_s
 		var author author_service.Author
 		err := rows.Scan(
 			&author.Id,
-			&tempFullname,
+			&author.FullName,
 			&author.CreatedAt,
-			&u,
-			&d,
+			&updatedAt,
+			&deletedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
-		if tempFullname != nil {
-			author.FullName = *tempFullname
+		if updatedAt.Valid {
+			author.UpdatedAt = updatedAt.String
 		}
-		if u.Valid {
-			author.UpdatedAt = u.String
+		if deletedAt.Valid {
+			author.DeletedAt = deletedAt.String
 		}
-		if d.Valid {
-			author.DeletedAt = d.String
-		}
-		authors = append(authors, &author)
+		res.Authors = append(res.Authors, &author)
 
 	}
 
-	return &author_service.GetAuthorResponse{Authors: authors}, err
+	return res, nil
 
 }
 
-func (stg authorRepo) GetAuthorById(id string) (*author_service.Author, error) {
+func (u authorRepo) GetAuthorById(id string) (*author_service.Author, error) {
+	res:=&author_service.Author{}
 	var (
-		res          author_service.Author
-		tempFullname *string
-
-		u sql.NullString
-		d sql.NullString
+		updatedAt sql.NullString
+		deletedAt sql.NullString
 	)
-	err := stg.db.QueryRow(`
+	err := u.db.QueryRow(`
 	SELECT 
 		id,
 		fullname,
@@ -113,28 +109,26 @@ func (stg authorRepo) GetAuthorById(id string) (*author_service.Author, error) {
 	FROM author  
 	WHERE id=$1 AND deleted_at is NULL`, id).Scan(
 		&res.Id,
-		&tempFullname,
+		&res.FullName,
 		&res.CreatedAt,
-		&u,
-		&d,
+		&updatedAt,
+		&deletedAt,
 	)
-	if u.Valid {
-		res.UpdatedAt = u.String
+	if updatedAt.Valid {
+		res.UpdatedAt = updatedAt.String
 	}
-	if d.Valid {
-		res.DeletedAt = d.String
+	if deletedAt.Valid {
+		res.DeletedAt = deletedAt.String
 	}
 	if err != nil {
 		return nil, err
 	}
-	if tempFullname != nil {
-		res.FullName = *tempFullname
-	}
-	return &res, nil
+
+	return res, nil
 }
 
-func (stg authorRepo) UpdateAuthor(req *author_service.UpdateAuthorRequest) error {
-	res, err := stg.db.NamedExec(`
+func (u authorRepo) UpdateAuthor(req *author_service.UpdateAuthorRequest) error {
+	res, err := u.db.NamedExec(`
 	UPDATE  author SET 
 		fullname=:f, 
 		updated_at=now() 
@@ -151,14 +145,14 @@ func (stg authorRepo) UpdateAuthor(req *author_service.UpdateAuthorRequest) erro
 	return errors.New("author not found")
 }
 
-func (stg authorRepo) DeleteAuthor(id string) error {
+func (u authorRepo) DeleteAuthor(id string) error {
 
-	res, err := stg.db.Exec(`UPDATE author SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL`, id)
+	res, err := u.db.Exec(`UPDATE author SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL`, id)
 	if err != nil {
 		return err
 	}
-	if n, _ := res.RowsAffected(); n == 0 {
-		return errors.New("author not found")
+	if n, _ := res.RowsAffected(); n > 0 {
+		return nil
 	}
-	return nil
+	return errors.New("author not found")
 }

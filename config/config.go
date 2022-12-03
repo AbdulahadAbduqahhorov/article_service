@@ -13,8 +13,7 @@ type Config struct {
 	Environment string // dev, test, prod
 	Version     string
 
-	ServiceHost string
-	HTTPPort    string
+	GrpcPort string
 
 	PostgresHost     string
 	PostgresPort     int
@@ -38,7 +37,7 @@ func Load() Config {
 	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", "dev"))
 	config.Version = cast.ToString(getOrReturnDefaultValue("VERSION", "1.0.0"))
 
-	config.HTTPPort = cast.ToString(getOrReturnDefaultValue("HTTP_PORT", ":8080"))
+	config.GrpcPort = cast.ToString(getOrReturnDefaultValue("GRPC_PORT", ":9001"))
 
 	config.PostgresHost = cast.ToString(getOrReturnDefaultValue("POSTGRES_HOST", "localhost"))
 	config.PostgresPort = cast.ToInt(getOrReturnDefaultValue("POSTGRES_PORT", 5432))

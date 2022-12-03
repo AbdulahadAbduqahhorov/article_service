@@ -53,6 +53,7 @@ func (s *AuthorService) UpdateAuthor(ctx context.Context, req *author_service.Up
 		return nil, status.Errorf(codes.Internal, "method UpdateAuthor: %v", err)
 
 	}
+	
 	return &author_service.UpdateAuthorResponse{Status: "Updated"}, nil
 }
 func (s *AuthorService) DeleteAuthor(ctx context.Context, req *author_service.DeleteAuthorRequest) (*author_service.DeleteAuthorResponse, error) {
