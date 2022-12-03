@@ -44,23 +44,4 @@ func main() {
 		log.Error("error while listening: %v", err)
 	}
 
-	// h := handlers.NewHandler(stg,cfg)
-	// switch cfg.Environment {
-	// case "dev":
-	// 	gin.SetMode(gin.DebugMode)
-	// case "test":
-	// 	gin.SetMode(gin.TestMode)
-	// default:
-	// 	gin.SetMode(gin.ReleaseMode)
-	// }
-
-	// router := gin.New()
-
-	// if cfg.Environment != "production" {
-	// 	router.Use(gin.Logger(), gin.Recovery())
-	// }
-
-	// api.SetUpApi(router, h, cfg)
-
-	// router.Run(cfg.HTTPPort)
 }
